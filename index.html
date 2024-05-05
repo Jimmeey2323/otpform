@@ -150,9 +150,16 @@
       const submitButton = document.getElementById("lead-form").querySelector("button[type='submit']");
       const leadForm = document.getElementById("lead-form");
 
-      sendOtpButton.addEventListener("click", async () => {
+            sendOtpButton.addEventListener("click", async () => {
         const phoneNumber = document.getElementById("phoneNumber").value;
+        console.log("Sending OTP to phone number:", phoneNumber);  // Log phone number
+        if (!phoneNumber) {
+          console.error("Phone number is undefined or null");
+          alert("Phone number is missing.");
+          return;
+        }
         const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a random 6-digit OTP
+        console.log("Generated OTP:", otp); // Log generated OTP
         const data = new FormData();
         data.append("token", "ZDQ2ODFkMGY0MzhhYjY5MmRiMzcxNzMyZjIyYjdhOTY=");
         data.append("otp", otp);
@@ -179,7 +186,9 @@
 
       verifyOtpButton.addEventListener("click", async () => {
         const phoneNumber = document.getElementById("phoneNumber").value;
+        console.log("Verifying OTP for phone number:", phoneNumber); // Log phone number
         const otp = otpInput.value;
+        console.log("OTP input by user:", otp); // Log user input OTP
         const data = new FormData();
         data.append("token", "ZDQ2ODFkMGY0MzhhYjY5MmRiMzcxNzMyZjIyYjdhOTY=");
         data.append("otp", otp);
