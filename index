@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Trial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1c90ff;
+            --hover-color: #003870;
+            --text-color: #333;
+            --input-background: #fff;
+            --input-border: #ccc;
+        }
+        body {
+            font-family: 'Play', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .form-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: transparent; /* Transparent background */
+            z-index: 1000;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 5px;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+            width: 300px;
+        }
+        .logo-container img {
+            max-width: 60px;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+            margin-bottom: 10px;
+            margin-top:0px;
+            align-items:right;
+        }
+        #lead-form {
+            padding: 10px;
+        }
+        #lead-form label, #lead-form p {
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 12px;
+            font-family: 'Play', sans-serif;
+        }
+        #lead-form input[type="text"], #lead-form input[type="email"], #lead-form input[type="tel"], #lead-form select {
+            width: calc(100% - 10px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-family: 'Play', sans-serif;
+            font-size: 12px;
+        }
+        #button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            margin-bottom:5px;
+            width: calc(100% - 10px);   
+        }
+
+        button {
+            width: 48%;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: 'Play', sans-serif;
+        }
+        button.submit {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            font-size: 12px;
+            font-family: 'Play', sans-serif;
+        }
+        button.submit:hover {
+            background-color: var(--hover-color);
+        }
+        button.close {
+            background-color: #888;
+            color: white;
+            border: none;
+            font-size: 12px;
+            font-family: 'Play', sans-serif;
+        }
+        button.close:hover {
+            background-color: #666;
+        }
+        small {
+            display: block;
+            font-size: 8px;
+            color: #666;
+            margin-top: -5px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-overlay" id="form-overlay">
+        <div class="form-container">
+            <form id="lead-form">
+                <div class="logo-container">
+                    <img src="https://i.imgur.com/9mOm7gP.png" alt="Logo">
+                </div>
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" required>
+                
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" required>
+                
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="phoneNumber">Phone Number</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" required placeholder="+91XXXXXXXXXX" oninput="formatPhoneNumber()">
+                
+                <label for="time">Preferred time to connect?</label>
+                <select id="time" name="time" required>
+                    <option value="" disabled selected>Select Preferred Time</option>
+                    <option value="Any">Any</option>
+                    <option value="Morning">Morning</option>
+                    <option value="Noon">Noon</option>
+                    <option value="Evening">Evening</option>
+                </select>
+                
+                <div id="button-container">
+                    <button id="close-button" class="close">Close</button>    
+                    <button id="verifyButton" type="button">Verify OTP</button>
+                    <button id="submitButton" type="submit" class="submit" disabled>Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const formOverlay = document.getElementById('form-overlay');
+        const closeButton = document.getElementById('close-button');
+
+        closeButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            formOverlay.style.display = 'none';
+        });
+
+        document.getElementById('lead-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const data = {
+                ...Object.fromEntries(formData)
+            };
+
+            // Handle form submission here
+            console.log('Form submitted:', data);
+        });
+
+        document.getElementById('verifyButton').addEventListener('click', function() {
+            var phoneNumber = document.getElementById('phoneNumber').value;
+
+            // Make AJAX request to verify OTP
+            $.ajax({
+                url: 'https://dbuddyz.com/verify/',
+                method: 'POST',
+                data: {
+                    otp: document.getElementById('otpInput').value,
+                    tonumber: phoneNumber
+                },
+                success: function(response) {
+                    // Handle success response
+                    console.log('OTP verified successfully');
+                    // Enable the submit button if OTP is verified
+                    document.getElementById('submitButton').disabled = false;
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error('Error verifying OTP:', error);
+                    // Display an error message to the user
+                    alert('Failed to verify OTP. Please try again.');
+                }
+            });
+        });
+
+        function formatPhoneNumber() {
+            let input = document.getElementById('phoneNumber');
+            let number = input.value.replace(/\D/g, ''); // Remove non-digit characters
+
+            // List of recognized country codes
+            const countryCodes = ['1', '33', '971', '44', '63', '65', '34'];
+
+            // Function to check if the number starts with any of the recognized country codes
+            function startsWithCode(num) {
+                return countryCodes.some(code => num.startsWith(code));
+            }
+
+            if (number.length === 10 && !startsWithCode(number)) {
+                // If number is 10 digits and does not start with a recognized code, assume it's Indian
+                input.value = '+91' + number;
+            } else if (startsWithCode(number)) {
+                // If it starts with a recognized country code, just add +
+                input.value = '+' + number;
+            } else {
+                // If none of the above, set the number as is but ensure it starts with +
+                input.value = '+' + number;
+            }
+        }
+    </script>
+</body>
+</html>
