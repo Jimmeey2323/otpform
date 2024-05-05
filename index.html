@@ -135,35 +135,35 @@
         </div>
         <script>
             const sendOtpButton = document.getElementById("sendOtpButton");
-            const verifyOtpButton = document.getElementById("verifyOtpButton");
-            const otpInput = document.getElementById("otpInput");
-            const submitButton = document.getElementById("submitButton");
-            const leadForm = document.getElementById("lead-form");
+const verifyOtpButton = document.getElementById("verifyOtpButton");
+const otpInput = document.getElementById("otpInput");
+const submitButton = document.getElementById("submitButton");
+const leadForm = document.getElementById("lead-form");
 
-            sendOtpButton.addEventListener("click", async () => {
-                const phoneNumber = document.getElementById("phoneNumber").value;
-                const data = { phone_number: phoneNumber };
+sendOtpButton.addEventListener("click", async () => {
+  const phoneNumber = document.getElementById("phoneNumber").value;
+  const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a random 6-digit OTP
+  const data = new FormData();
+  data.append("token", "ZDQ2ODFkMGY0MzhhYjY5MmRiMzcxNzMyZjIyYjdhOTY=");
+  data.append("otp", otp);
+  data.append("tonumber", `+${phoneNumber}`);
 
-                try {
-                    const response = await fetch("https://dbuddyz.com/send/", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: "Bearer ZDQ2ODFkMGY0MzhhYjY5MmRiMzcxNzMyZjIyYjdhOTY=",
-                        },
-                        body: JSON.stringify(data),
-                    });
+  try {
+    const response = await fetch("https://dbuddyz.com/send/", {
+      method: "POST",
+      body: data,
+    });
 
-                    if (response.ok) {
-                        console.log("OTP sent successfully");
-                        verifyOtpButton.disabled = false;
-                    } else {
-                        console.error("Error sending OTP:", response.statusText);
-                    }
-                } catch (error) {
-                    console.error("Error sending OTP:", error);
-                }
-            });
+    if (response.ok) {
+      console.log("OTP sent successfully");
+      verifyOtpButton.disabled = false;
+    } else {
+      console.error("Error sending OTP:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Error sending OTP:", error);
+  }
+});
 
             verifyOtpButton.addEventListener("click", () => {
                 const otpInputValue = otpInput.value;
